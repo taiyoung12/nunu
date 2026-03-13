@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  # 메인 DB (앱 데이터 + pgvector)
+  nunu-db:
+    image: pgvector/pgvector:pg16
+    hostname: nunu-db
+    container_name: nunu-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: nunu
+      POSTGRES_PASSWORD: nunu
+      POSTGRES_DB: nunu
+    volumes:
+      - nunu-db-data:/var/lib/postgresql/data
+
+  # 쿼리 대상 DB (read-only 테스트용, 실제 운영에서는 별도 DB를 바라봄)
+  query-db:
+    image: postgres:16-alpine
+    hostname: query-db
+    container_name: query-db
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: readonly
+      POSTGRES_PASSWORD: readonly
+      POSTGRES_DB: prod
+    volumes:
+      - query-db-data:/var/lib/postgresql/data
+
+volumes:
+  nunu-db-data:
+  query-db-data:
